@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\StockController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\UserController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -40,14 +42,23 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/riwayat',     [StockController::class, 'riwayat'])->name('riwayat');
     });
 
-    // Laporan (dikerjakan Fatimah)
+        // Laporan
     Route::middleware(['role:owner,manajer'])->prefix('laporan')->name('laporan.')->group(function () {
-        // Fatimah isi di sini
+        Route::get('/',                [ReportController::class, 'index'])->name('index');
+        Route::get('/transaksi',       [ReportController::class, 'transaksi'])->name('transaksi');
+        Route::get('/transaksi/cetak', [ReportController::class, 'cetakTransaksi'])->name('cetakTransaksi');
+        Route::get('/stok',            [ReportController::class, 'stok'])->name('stok');
+        Route::get('/stok/cetak',      [ReportController::class, 'cetakStok'])->name('cetakStok');
     });
 
-    // User Management (dikerjakan Fatimah)
+    // User Management
     Route::middleware(['role:owner'])->prefix('users')->name('users.')->group(function () {
-        // Fatimah isi di sini
+        Route::get('/',            [UserController::class, 'index'])->name('index');
+        Route::get('/tambah',      [UserController::class, 'create'])->name('create');
+        Route::post('/tambah',     [UserController::class, 'store'])->name('store');
+        Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
+        Route::put('/{user}',      [UserController::class, 'update'])->name('update');
+        Route::delete('/{user}',   [UserController::class, 'destroy'])->name('destroy');
     });
 });
 

@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\TransactionController;
+use App\Http\Controllers\StockController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -22,14 +24,20 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/dashboard', [DashboardController::class, 'manajer'])->name('dashboard');
     });
 
-    // Kasir (dikerjakan Ibnu)
+    // Transaksi
     Route::middleware(['role:kasir,supervisor,manajer'])->prefix('transaksi')->name('transaksi.')->group(function () {
-        // Ibnu isi di sini
+        Route::get('/',        [TransactionController::class, 'index'])->name('index');
+        Route::get('/baru',    [TransactionController::class, 'create'])->name('create');
+        Route::post('/baru',   [TransactionController::class, 'store'])->name('store');
+        Route::get('/{transaction}', [TransactionController::class, 'show'])->name('show');
     });
 
-    // Gudang (dikerjakan Ibnu)
+    // Stok Gudang
     Route::middleware(['role:gudang,supervisor,manajer'])->prefix('stok')->name('stok.')->group(function () {
-        // Ibnu isi di sini
+        Route::get('/',            [StockController::class, 'index'])->name('index');
+        Route::get('/masuk',       [StockController::class, 'masuk'])->name('masuk');
+        Route::post('/masuk',      [StockController::class, 'storeMasuk'])->name('storeMasuk');
+        Route::get('/riwayat',     [StockController::class, 'riwayat'])->name('riwayat');
     });
 
     // Laporan (dikerjakan Fatimah)

@@ -17,6 +17,13 @@ class ReportController extends Controller
 
     public function transaksi(Request $request)
     {
+        $stores = Store::all();
+
+        // Kalau belum ada input tanggal, tampilkan form kosong dulu
+        if (!$request->has('dari')) {
+            return view('laporan.transaksi', compact('stores'));
+        }
+
         $request->validate([
             'dari'   => 'required|date',
             'sampai' => 'required|date|after_or_equal:dari',
@@ -36,7 +43,6 @@ class ReportController extends Controller
 
         $transactions = $query->latest()->get();
         $total        = $transactions->sum('total_amount');
-        $stores       = Store::all();
 
         return view('laporan.transaksi', compact('transactions', 'total', 'request', 'stores'));
     }

@@ -17,18 +17,25 @@ class DashboardController extends Controller
             return redirect()->route('owner.dashboard');
         }
 
-        return redirect()->route('toko.dashboard');
+        if ($user->hasAnyRole(['manajer', 'supervisor'])) {
+            return redirect()->route('toko.dashboard');
+        }
+
+        if ($user->hasRole('kasir')) {
+            return redirect()->route('transaksi.index');
+        }
+
+        if ($user->hasRole('gudang')) {
+            return redirect()->route('stok.index');
+        }
+
+        return view('dashboard');
     }
 
     public function owner()
     {
-        $stores = Store::withCount('transactions')
-            ->with(['transactions' => function ($q) {
-                $q->whereMonth('created_at', now()->month);
-            }])
-            ->get();
+        $stores = Store::all();
 
-        // Total penjualan per cabang bulan ini
         $salesPerStore = Store::all()->map(function ($store) {
             return [
                 'name'  => $store->name,
@@ -43,12 +50,10 @@ class DashboardController extends Controller
             ];
         });
 
-        // Stok menipis (semua cabang)
         $lowStocks = Stock::with(['product', 'store'])
             ->whereColumn('quantity', '<=', 'min_quantity')
             ->get();
 
-        // Total penjualan hari ini (semua cabang)
         $todaySales = Transaction::whereDate('created_at', today())
             ->where('status', 'completed')
             ->sum('total_amount');

@@ -12,7 +12,9 @@ class UserController extends Controller
 {
     public function index()
     {
-        $users = User::with(['roles', 'store'])->paginate(20);
+        $users = User::with(['roles', 'store'])
+            ->orderBy('store_id')
+            ->get();
         return view('users.index', compact('users'));
     }
 
@@ -79,9 +81,16 @@ class UserController extends Controller
 
     public function destroy(User $user)
     {
+        // Tidak bisa hapus akun sendiri
         if ($user->id === auth()->id()) {
             return back()->with('error', 'Tidak bisa menghapus akun sendiri.');
         }
+
+        // Tidak bisa hapus akun owner
+        if ($user->hasRole('owner')) {
+            return back()->with('error', 'Akun owner tidak bisa dihapus.');
+        }
+
         $user->delete();
         return redirect()->route('users.index')->with('success', 'Pengguna berhasil dihapus.');
     }

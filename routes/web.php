@@ -6,6 +6,7 @@ use App\Http\Controllers\TransactionController;
 use App\Http\Controllers\StockController;
 use App\Http\Controllers\ReportController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\ProductController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -59,6 +60,15 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}',      [UserController::class, 'update'])->name('update');
         Route::delete('/{user}',   [UserController::class, 'destroy'])->name('destroy');
+    });
+    // Produk — Owner & Manajer
+    Route::middleware(['role:owner,manajer'])->prefix('products')->name('products.')->group(function () {
+        Route::get('/',            [ProductController::class, 'index'])->name('index');
+        Route::get('/tambah',      [ProductController::class, 'create'])->name('create');
+        Route::post('/tambah',     [ProductController::class, 'store'])->name('store');
+        Route::get('/{product}/edit', [ProductController::class, 'edit'])->name('edit');
+        Route::put('/{product}',   [ProductController::class, 'update'])->name('update');
+        Route::delete('/{product}',[ProductController::class, 'destroy'])->name('destroy');
     });
 });
 

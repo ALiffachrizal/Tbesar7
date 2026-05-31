@@ -95,6 +95,13 @@
                     <span>👥</span> Manajemen User
                 </a>
                 @endif
+                @if(auth()->user()->hasAnyRole(['owner','manajer']))
+                <a href="{{ route('products.index') }}"
+                    class="flex items-center gap-2 px-3 py-2.5 rounded-lg text-sm font-medium transition
+                    {{ request()->routeIs('products.*') ? 'bg-blue-50 text-blue-700 border border-blue-100' : 'text-gray-600 hover:bg-gray-50' }}">
+                    <span>🏷️</span> Produk
+                </a>
+                @endif
 
             </nav>
         </aside>

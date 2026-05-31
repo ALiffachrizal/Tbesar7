@@ -36,6 +36,8 @@ class TransactionController extends Controller
                 'id'         => $s->product->id,
                 'name'       => $s->product->name,
                 'barcode'    => $s->product->barcode,
+                'category'   => $s->product->category,
+                'unit'       => $s->product->unit,
                 'sell_price' => $s->product->sell_price,
                 'stock'      => $s->quantity,
             ]);
